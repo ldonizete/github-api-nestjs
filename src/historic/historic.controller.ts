@@ -12,6 +12,7 @@ export class HistoricController {
     const data = {
         date: new Date(), 
         username: historicData.username,
+        sessionUsername: historicData.sessionUsername,
         status: historicData.status,
         repositories: historicData.repositories
       };

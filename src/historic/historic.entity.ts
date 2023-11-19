@@ -12,6 +12,9 @@ export class Historic {
   username: string;
 
   @Column()
+  sessionUsername: string;
+
+  @Column()
   status: boolean;
 
   @Column({ default: 0 })
