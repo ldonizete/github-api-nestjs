@@ -1,21 +1,22 @@
 // user.controller.ts
-import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException  } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, UseGuards  } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
-import { Observable } from 'rxjs/internal/Observable';
+import { AuthGuard } from '../auth/auth.guard';
 
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService,private readonly httpService: HttpService) {}
-
+  
+  @UseGuards(AuthGuard)
   @Get()
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
-
+  
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
     return this.userService.findOne(+id);
@@ -35,36 +36,38 @@ export class UsersController {
         following,
         repositories: public_repos,
         biography: bio,
-        email: userData.email, // Usar o email fornecido no corpo da requisição
+        email: userData.email, 
         twitter: twitter_username,
         companyName: company,
         website: blog,
-        password: userData.password, // Usar a senha fornecida no corpo da requisição
+        password: userData.password, 
         avatar_url
       });    
 
     return this.userService.create(newUser);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
     return this.userService.remove(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Put('update/:id')
   async update(@Param('id') id: number, @Body() userData: Partial<User>): Promise<User> {
-    // Verificar se o usuário com o ID fornecido existe
     const existingUser = await this.userService.findOne(id);
+    
     if (!existingUser) {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    // Atualizar os campos fornecidos no corpo da requisição
     const updatedUser = await this.userService.update(id, userData);
 
     return updatedUser;
   }
 
+  @UseGuards(AuthGuard)
   @Post('repositories')
   async getUserRepositories(@Body() userData: { username: string }): Promise<any> {
     const { username } = userData;
@@ -85,6 +88,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Post('userinfo')
   async getUserInfo(@Body() userData: { username: string }): Promise<any> {
     const { username } = userData;

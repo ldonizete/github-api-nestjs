@@ -18,9 +18,9 @@ export class HistoricService {
   async findLastTwenty(): Promise<Historic[]> {
     return this.historicRepository.find({
       order: {
-        date: 'DESC', // Ordena por data em ordem decrescente
+        date: 'DESC', 
       },
-      take: 20, // Retorna apenas os 20 registros
+      take: 20, 
     });
   }
 
